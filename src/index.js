@@ -9,9 +9,9 @@ app.use(cors());
 
 app.use(express.json());
 
-const services = require('./routes/index');
+const router = require('./routes/index');
 
-app.use(services);
+app.use(router);
 
 app.listen(PORT, () => {
   console.log(`Port is listening on ${PORT}`); // eslint-disable-line
