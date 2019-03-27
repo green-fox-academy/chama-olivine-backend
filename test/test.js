@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../index');
+const app = require('../src/index');
 const { expect } = require('chai');
 
 describe('GET /helloworld', () => {
@@ -11,7 +11,7 @@ describe('GET /helloworld', () => {
       .expect(200)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body.message).to.equal('Hello World!');
+        expect(data.body.helloWorld.message).to.equal('Hello World!');
         return done();
       });
   });
