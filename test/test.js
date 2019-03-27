@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('../src/index');
 const { expect } = require('chai');
+const app = require('../src/index');
 
 describe('GET /helloworld', () => {
   it('should respond with 200 - OK', (done) => {
