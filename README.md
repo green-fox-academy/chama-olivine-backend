@@ -45,13 +45,13 @@ if ! egrep -q '^[^#].*' "$1"; then
 	echo "$example_message"
 	exit 1
 elif ! egrep -q "$prefix_regex|Merge" "$1"; then
-    echo "Missing prefix! Prefixes must be: fix | feat | refactor" 
-	  echo "$example_message"    
-		exit 1
+   	echo "Missing prefix! Prefixes must be: fix | feat | refactor" 
+	echo "$example_message"    
+	exit 1
 elif ! egrep -q "$branch_regex|Merge" "$1"; then
-    echo "Missing Jira issue key inside the parentheses. Example: (JIRA-2)" 
-	  echo "$example_message"    
-		exit 1
+   	echo "Missing Jira issue key inside the parentheses. Example: (JIRA-2)" 
+	echo "$example_message"    
+	exit 1
 fi
 ```
 
