@@ -1,4 +1,4 @@
-const dbService = require('../services/regCheckDB');
+const dbService = require('./regCheckDB');
 const users = require('../dummy/userDB');
 
 const createUser = item => new Promise((resolve) => {
@@ -18,6 +18,22 @@ const createUser = item => new Promise((resolve) => {
   }
 });
 
+const loginUsers = users.userDB;
+
+const authorizeUser = input => new Promise((resolve, reject) => {
+  Object.keys(loginUsers).forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(loginUsers, key)) {
+      const element = loginUsers[key];
+      if (element.username === input.username && element.password === input.password) {
+        resolve(element.userId);
+        return; // eslint-disable-line
+      }
+    }
+  });
+  reject(Error(false));
+});
+
 module.exports = {
   createUser,
+  authorizeUser,
 };
