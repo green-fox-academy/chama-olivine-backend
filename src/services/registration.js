@@ -1,20 +1,21 @@
 const dbService = require('../services/regCheckDB');
 const users = require('../dummy/userDB');
 
-const createUser = item => new Promise((resolve) => {
+const createUser = item => new Promise((resolve, reject) => {
   if (!dbService.checkUserName(item.username) || !dbService.checkPassword(item.password)) {
-    resolve('Incorrect registration data');
+    reject(new Error(400));
   } else if (item.password !== item.confirmPsw) {
-    resolve('Passwords don\'t match');
+    reject(new Error(400));
   } else if (!dbService.containsUser(item)) {
     const user = {
+      userId: 1,
       username: item.username,
       password: item.password,
     };
     users.userDB.push(user);
-    resolve(user);
+    resolve(user.userId);
   } else {
-    resolve('Username already exists');
+    reject(new Error(500));
   }
 });
 
