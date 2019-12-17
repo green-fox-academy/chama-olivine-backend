@@ -11,9 +11,10 @@ describe('POST /register', () => {
     request(app)
       .post('/register')
       .send(user)
+      .expect(400)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal('Incorrect registration data');
+        expect(data.body).to.deep.equal('You made a 400 error');
         return done();
       });
   });
@@ -25,9 +26,10 @@ describe('POST /register', () => {
     request(app)
       .post('/register')
       .send(user1)
+      .expect(400)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal('Incorrect registration data');
+        expect(data.body).to.deep.equal('You made a 400 error');
         return done();
       });
   });
@@ -40,9 +42,10 @@ describe('POST /register', () => {
     request(app)
       .post('/register')
       .send(user11)
+      .expect(400)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal('Incorrect registration data');
+        expect(data.body).to.deep.equal('You made a 400 error');
         return done();
       });
   });
@@ -55,9 +58,10 @@ describe('POST /register', () => {
     request(app)
       .post('/register')
       .send(user2)
+      .expect(400)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal('Passwords don\'t match');
+        expect(data.body).to.deep.equal('You made a 400 error');
         return done();
       });
   });
@@ -70,9 +74,10 @@ describe('POST /register', () => {
     request(app)
       .post('/register')
       .send(user3)
+      .expect(400)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal('Incorrect registration data');
+        expect(data.body).to.deep.equal('You made a 400 error');
         return done();
       });
   });
@@ -85,9 +90,10 @@ describe('POST /register', () => {
     request(app)
       .post('/register')
       .send(user4)
+      .expect(500)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal('Username already exists');
+        expect(data.body).to.deep.equal('You made a 500 error');
         return done();
       });
   });
@@ -102,10 +108,7 @@ describe('POST /register', () => {
       .send(user5)
       .end((err, data) => {
         if (err) return done(err);
-        expect(JSON.stringify(data.body)).to.deep.equal(JSON.stringify({
-          username: 'Attila',
-          password: 'xxxx5555',
-        }));
+        expect(data.body).to.deep.equal(1);
         return done();
       });
   });
