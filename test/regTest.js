@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../src/index');
@@ -37,7 +38,7 @@ describe('POST /register', () => {
     const user11 = {
       username: 'Attila',
       password: 'xx55',
-      confirmPsw: 'xxxx5555',
+      confirmPsw: 'xx55',
     };
     request(app)
       .post('/register')
@@ -108,7 +109,7 @@ describe('POST /register', () => {
       .send(user5)
       .end((err, data) => {
         if (err) return done(err);
-        expect(data.body).to.deep.equal(1);
+        expect(JSON.stringify(data.body)).to.deep.equal('1');
         return done();
       });
   });

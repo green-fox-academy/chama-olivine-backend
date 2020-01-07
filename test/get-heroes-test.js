@@ -1,9 +1,10 @@
+process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../src/index');
 
 const expectedOutputWithExistingUserId = [{
-  userId: 2,
+  id: 3,
   name: 'hero3',
   experience: 1,
   level: 1,
@@ -12,11 +13,11 @@ const expectedOutputWithExistingUserId = [{
   attackmin: 1,
   attackmax: 1,
   defense: 1,
-  inventory: [],
   finalWords: 'Fuck off!',
+  userId: 2,
 },
 {
-  userId: 2,
+  id: 4,
   name: 'hero4',
   experience: 1,
   level: 1,
@@ -25,8 +26,8 @@ const expectedOutputWithExistingUserId = [{
   attackmin: 1,
   attackmax: 1,
   defense: 1,
-  inventory: [],
   finalWords: 'Fuck off!',
+  userId: 2,
 }];
 
 describe('GET /heroes', () => {
@@ -35,8 +36,8 @@ describe('GET /heroes', () => {
       .get('/heroes')
       .set('Accept', 'application/json')
       .set('userid', '2')
-      .expect('Content-Type', /json/)
       .expect(200)
+      .expect('Content-Type', /json/)
       .end((err, data) => {
         if (err) return done(err);
         expect(JSON.stringify(data.body)).to.equal(JSON.stringify(expectedOutputWithExistingUserId));

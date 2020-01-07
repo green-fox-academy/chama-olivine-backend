@@ -1,5 +1,6 @@
 class Hero {
-  constructor(name, userId) {
+  constructor(id, name, userId) {
+    this.id = id;
     this.userId = userId;
     this.name = name;
     this.experience = 0;
