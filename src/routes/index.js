@@ -32,6 +32,8 @@ router.post('/hero', heroController.postHero);
 
 router.get('/heroes', heroController.getHeroes);
 
+router.get('/hero/:heroId', heroController.getHeroById);
+
 router.post('/register', registrationController.register);
 
 module.exports = router;

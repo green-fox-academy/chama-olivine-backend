@@ -1,20 +1,40 @@
+
+
 class Hero {
-  constructor(id, name, userId) {
-    this.id = id;
-    this.userId = userId;
-    this.name = name;
-    this.experience = 0;
-    this.level = 1;
-    this.healthmax = 500;
-    this.healthact = 500;
-    this.attackmin = 1;
-    this.attackmax = 5;
-    this.defense = 1;
-    this.inventory = [];
-    this.finalWords = 'Feck! Arse! Drink!';
+  constructor(hero) {
+    const defaults = {
+      experience: 1,
+      level: 1,
+      healthmax: 1,
+      healthact: 1,
+      attackmin: 1,
+      attackmax: 1,
+      defense: 1,
+      inventory: [],
+      finalWords: null,
+      smallImage: null,
+      bigImage: null,
+    };
+    const opts = Object.assign({}, defaults, hero);
+
+    this.id = opts.id;
+    this.userId = opts.userId;
+    this.name = opts.name;
+    this.experience = opts.experience;
+    this.level = opts.level;
+    this.healthmax = opts.healthmax;
+    this.healthact = opts.healthact;
+    this.attackmin = opts.attackmin;
+    this.attackmax = opts.attackmax;
+    this.defense = opts.defense;
+    this.inventory = opts.inventory;
+    this.finalWords = opts.finalWords;
+    this.smallImage = opts.smallImage;
+    this.bigImage = opts.bigImage;
   }
 }
 
 module.exports = {
   Hero,
 };
+

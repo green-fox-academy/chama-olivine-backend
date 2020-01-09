@@ -1,4 +1,5 @@
 const { Hero } = require('../models/heroModel');
+const { Equipment } = require('../models/equipment');
 
 class HeroService {
   constructor(conn) {
@@ -18,23 +19,36 @@ class HeroService {
     });
   }
 
-  heroExistsCheck(heroName, userId) {
+  heroExistsCheck(hero) {
     return new Promise((resolve, reject) => {
       const query = 'SELECT * FROM heroes INNER JOIN users ON heroes.userId = users.id WHERE users.id = ? AND heroes.name = ?;';
-
-      this.conn.query(query, [userId, heroName], (err, row) => {
+      this.conn.query(query, [hero.userId, hero.name], (err, row) => {
         err ? reject(err) : resolve(row.length);
       });
     });
   }
 
-  createHero(heroName, userId) {
+  createHero(hero) {
     return new Promise((resolve, reject) => {
-      if (heroName && userId) {
-        const query = 'INSERT INTO heroes (name, userId) VALUES (?, ?);';
-
-        this.conn.query(query, [heroName, userId], (err, row) => {
-          err ? reject(err) : resolve(new Hero(row.insertId, heroName, userId));
+      if (hero.name && hero.userId) {
+        const query = 'INSERT INTO heroes (name, experience, level, healthmax, healthact, attackmin, attackmax, defense, finalWords, userId, smallImage, bigImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'; //eslint-disable-line
+        this.conn.query(query, [
+          hero.name,
+          hero.experience,
+          hero.level,
+          hero.healthmax,
+          hero.healthact,
+          hero.attackmin,
+          hero.attackmax,
+          hero.defense,
+          hero.finalWords,
+          hero.userId,
+          hero.smallImage,
+          hero.bigImage,
+        ],
+        (err, row) => {
+          hero.id = row.insertId;
+          err ? reject(err) : resolve(new Hero(hero));
         });
         return;
       }
@@ -42,16 +56,48 @@ class HeroService {
     });
   }
 
-  async addHero(heroName, userId) {
-    const check = await this.heroExistsCheck(heroName, userId);
-
+  async addHero(hero) {
+    const check = await this.heroExistsCheck(hero);
     return new Promise((resolve, reject) => {
-      if (check === 1) {
+      if (check !== 0) {
         resolve({ Message: 'Sorry, this name is already in use!' });
+        return;
       }
-      this.createHero(heroName, userId)
-        .then(newHero => resolve(newHero),
+      this.createHero(hero)
+        .then(resHero => resolve(resHero),
           error => reject(error));
+    });
+  }
+
+  retrieveHeroById(heroId) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM heroes WHERE id = ?; SELECT name, id, type, active FROM equipment WHERE heroId = ?; SELECT equipmentId, attributeName, value FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE heroId = ?;'; //eslint-disable-line
+      this.conn.query(query, [heroId, heroId, heroId], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else if (rows[0].length > 0) {
+          const equipment = rows[1];
+          const modifiers = rows[2];
+          const hero = rows[0][0];
+          const inventory = [];
+
+          equipment.forEach((element) => {
+            const sortedModifiers = modifiers.filter(e => e.equipmentId === element.id);
+            sortedModifiers.forEach((e) => {
+              delete e.equipmentId;
+            });
+            const activeState = Boolean(Number(element.active));
+            const equipmentItem = new Equipment(element.name, sortedModifiers, element.type, activeState);
+            inventory.push(equipmentItem);
+          });
+          hero.inventory = inventory;
+
+          const resHero = new Hero(hero);
+          resolve(resHero);
+        } else {
+          reject(new Error('The requested hero doesn\'t exist'));
+        }
+      });
     });
   }
 }

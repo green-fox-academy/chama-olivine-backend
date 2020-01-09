@@ -15,6 +15,8 @@ const expectedOutputWithExistingUserId = [{
   defense: 1,
   finalWords: 'Fuck off!',
   userId: 2,
+  smallImage: null,
+  bigImage: null,
 },
 {
   id: 4,
@@ -28,6 +30,8 @@ const expectedOutputWithExistingUserId = [{
   defense: 1,
   finalWords: 'Fuck off!',
   userId: 2,
+  smallImage: null,
+  bigImage: null,
 }];
 
 describe('GET /heroes', () => {
