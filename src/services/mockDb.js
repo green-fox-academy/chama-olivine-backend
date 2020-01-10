@@ -121,6 +121,39 @@ const mockdb = {
       }
       if (values[0] === 90) callback(null, [[], [], []]);
     }
+    if (qstring === 'SELECT * FROM equipment WHERE id = ?;') {
+      if (values[0] === undefined || values[0] === 91) callback(null, []);
+      if (values[0] === 4) {
+        callback(null, [{
+          id: 4,
+          name: 'Spear of incompetent developers',
+          type: 'Left Hand',
+          active: 0,
+          heroId: 2,
+        }]);
+      }
+      if (values[0] === 9) {
+        callback(null, [{
+          id: 9,
+          name: 'Sword',
+          type: 'Bollocks',
+          active: 0,
+          heroId: 1,
+        }]);
+      }
+    }
+    if (qstring === 'SELECT * FROM equipment WHERE heroId = ? AND type = ? AND active = 1;') {
+      if (values[0] === 1 && values[1] === 'Bollocks') callback(null, []);
+      if (values[0] === 2 && values[1] === 'Left Hand') {
+        callback(null, [{
+          id: 1,
+          name: 'Sword of minor bullshit',
+          type: 'Left Hand',
+          active: 0,
+        }]);
+      }
+    }
+    if (qstring === 'UPDATE equipment SET active = ? WHERE id = ?;') callback(null, null);
   },
 };
 

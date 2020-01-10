@@ -10,6 +10,8 @@ const RegistrationController = require('../controllers/registrationController');
 const RegistrationService = require('../services/registrationService');
 const LoginController = require('../controllers/loginController');
 const LoginService = require('../services/loginService');
+const EquipmentController = require('../controllers/equipmentController');
+const EquipmentService = require('../services/equipmentService');
 
 let useddb = conn;
 
@@ -23,6 +25,8 @@ const registrationService = new RegistrationService(useddb);
 const registrationController = new RegistrationController(registrationService);
 const loginService = new LoginService(useddb, registrationService);
 const loginController = new LoginController(loginService);
+const equipmentService = new EquipmentService(useddb);
+const equipmentController = new EquipmentController(equipmentService);
 
 router.get('/helloworld', helloWorldController.helloWorldController);
 
@@ -35,5 +39,7 @@ router.get('/heroes', heroController.getHeroes);
 router.get('/hero/:heroId', heroController.getHeroById);
 
 router.post('/register', registrationController.register);
+
+router.post('/hero/use', equipmentController.use);
 
 module.exports = router;
