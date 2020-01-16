@@ -3,10 +3,14 @@ const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../src/index');
 
+const jwt = require('jsonwebtoken');
+
+let newAccTokenHeader = '';
+
 const expectedResponses = [
   {
     id: undefined,
-    userId: 2,
+    userId: 1,
     name: 'Bela',
     experience: 1,
     level: 1,
@@ -28,12 +32,29 @@ const expectedResponses = [
   },
 ];
 
+describe('POST /login', () => {
+  it('should get back the userId from the accessToken and the header for POST /hero tests', (done) => {
+    request(app)
+      .post('/login')
+      .send({
+        username: 'Daniel',
+        password: 'xxxx5555',
+      })
+      .end((err, data) => {
+        if (err) return done(err);
+        newAccTokenHeader = `Bearer ${data.body.accessToken}`;
+        expect(JSON.stringify(jwt.decode(data.body.accessToken).userId)).to.equal(JSON.stringify(1));
+        return done();
+      });
+  });
+});
+
 describe('POST /hero', () => {
   it('should respond with an object detailing the newly created hero', (done) => {
     request(app)
       .post('/hero')
       .set('Accept', 'application/json')
-      .set('userid', '2')
+      .set('Authorization', newAccTokenHeader)
       .send({ name: 'Bela' })
       .expect('Content-Type', /json/)
       .expect(200)
@@ -47,7 +68,7 @@ describe('POST /hero', () => {
     request(app)
       .post('/hero')
       .set('Accept', 'application/json')
-      .set('userid', '1')
+      .set('Authorization', newAccTokenHeader)
       .send({ name: 'hero1' })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -57,38 +78,11 @@ describe('POST /hero', () => {
         return done();
       });
   });
-  it('should respond with a message if userId is missing', (done) => {
-    request(app)
-      .post('/hero')
-      .set('Accept', 'application/json')
-      .send({ name: 'hero1' })
-      .expect(400)
-      .expect('Content-Type', /json/)
-      .end((err, data) => {
-        if (err) return done(err);
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify(expectedResponses[2]));
-        return done();
-      });
-  });
-  it('should respond with a message if userId is not a number', (done) => {
-    request(app)
-      .post('/hero')
-      .set('Accept', 'application/json')
-      .set('userid', 'ASD')
-      .send({ name: 'hero1' })
-      .expect(400)
-      .expect('Content-Type', /json/)
-      .end((err, data) => {
-        if (err) return done(err);
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify(expectedResponses[2]));
-        return done();
-      });
-  });
   it('should respond with a message if hero name is missing', (done) => {
     request(app)
       .post('/hero')
       .set('Accept', 'application/json')
-      .set('userid', '2')
+      .set('Authorization', newAccTokenHeader)
       .expect(400)
       .expect('Content-Type', /json/)
       .end((err, data) => {

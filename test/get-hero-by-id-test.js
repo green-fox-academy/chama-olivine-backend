@@ -2,6 +2,9 @@ process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../src/index');
+const jwt = require('jsonwebtoken');
+
+let newAccTokenHeader = '';
 
 const expectedResponses = [
   {
@@ -17,49 +20,59 @@ const expectedResponses = [
     defense: 1,
     inventory: [
       {
+        id: 2,
         name: 'Sword of major farts',
         type: 'Right Hand',
         active: false,
         modifiers: [
           {
+            equipmentId: 2,
             attributeName: 'attackmax',
             value: -11,
           },
           {
+            equipmentId: 2,
             attributeName: 'healthmax',
             value: 12,
           },
           {
+            equipmentId: 2,
             attributeName: 'healthmax',
             value: 5,
           },
         ],
       },
       {
+        id: 4,
         name: 'Spear of incompetent developers',
         type: 'Left Hand',
         active: false,
         modifiers: [
           {
+            equipmentId: 4,
             attributeName: 'healthmax',
             value: 12,
           },
           {
+            equipmentId: 4,
             attributeName: 'attackmin',
             value: 11,
           },
           {
+            equipmentId: 4,
             attributeName: 'attackmax',
             value: -11,
           },
         ],
       },
       {
+        id: 6,
         name: 'Bow of major annoyance',
         type: 'Left Hand',
         active: false,
         modifiers: [
           {
+            equipmentId: 6,
             attributeName: 'attackmin',
             value: 8,
           },
@@ -78,12 +91,30 @@ const expectedResponses = [
   },
 ];
 
+describe('POST /login', () => {
+  it('should get back the userId from the accessToken and the header for GET /hero/:heroId test', (done) => {
+    request(app)
+      .post('/login')
+      .send({
+        username: 'Daniel',
+        password: 'xxxx5555',
+      })
+      .end((err, data) => {
+        if (err) return done(err);
+        newAccTokenHeader = `Bearer ${data.body.accessToken}`;
+        expect(JSON.stringify(jwt.decode(data.body.accessToken).userId)).to.equal(JSON.stringify(1));
+        return done();
+      });
+  });
+});
+
 
 describe('GET /hero/:heroId', () => {
   it('should respond with a JSON object containing all information on the hero', (done) => {
     request(app)
       .get('/hero/2')
       .set('Accept', 'application/json')
+      .set('Authorization', newAccTokenHeader)
       .expect(200)
       .expect('Content-Type', /json/)
       .end((err, data) => {
@@ -97,6 +128,7 @@ describe('GET /hero/:heroId', () => {
     request(app)
       .get('/hero/90')
       .set('Accept', 'application/json')
+      .set('Authorization', newAccTokenHeader)
       .expect(400)
       .expect('Content-Type', /json/)
       .end((err, data) => {
@@ -110,6 +142,7 @@ describe('GET /hero/:heroId', () => {
     request(app)
       .get('/hero/kiscica')
       .set('Accept', 'application/json')
+      .set('Authorization', newAccTokenHeader)
       .expect(400)
       .expect('Content-Type', /json/)
       .end((err, data) => {

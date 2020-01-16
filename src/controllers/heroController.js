@@ -1,22 +1,23 @@
 const { Hero } = require('../models/heroModel');
 
 class HeroController {
-  constructor(heroService) {
+  constructor(heroService, getIdFromToken) {
     this.heroService = heroService;
     this.getHeroes = this.getHeroes.bind(this);
     this.postHero = this.postHero.bind(this);
     this.getHeroById = this.getHeroById.bind(this);
+    this.getIdFromToken = getIdFromToken;
   }
 
   getHeroes(req, res) {
-    this.heroService.getHeroes(req.headers.userid)
+    this.heroService.getHeroes(this.getIdFromToken(req))
       .then(data => res.status(200).json(data))
       .catch(error => res.status(500).json(error));
   }
 
   postHero(req, res) {
     const heroInput = {
-      userId: Number(req.headers.userid),
+      userId: Number(this.getIdFromToken(req)),
       name: req.body.name,
     };
     if (heroInput.userId && heroInput.name) {

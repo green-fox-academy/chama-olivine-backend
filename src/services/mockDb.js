@@ -1,7 +1,7 @@
 const mockdb = {
   query: (qstring, values, callback) => {
-    if (qstring === 'SELECT * FROM heroes WHERE userId = ?;' && values[0] === '3') callback(null, []);
-    if (qstring === 'SELECT * FROM heroes WHERE userId = ?;' && values[0] === '2') {
+    if (qstring === 'SELECT * FROM heroes WHERE userId = ?;' && values[0] === 3) callback(null, []);
+    if (qstring === 'SELECT * FROM heroes WHERE userId = ?;' && values[0] === 1) {
       callback(null, [{
         id: 3,
         name: 'hero3',
@@ -35,12 +35,12 @@ const mockdb = {
     }
     if (qstring === 'SELECT * FROM heroes INNER JOIN users ON heroes.userId = users.id WHERE users.id = ? AND heroes.name = ?;') {
       if (values[0] === 1 && values[1] === 'hero1') callback(null, [1]);
-      if (values[0] === 2 && values[1] === 'Bela') callback(null, []);
+      if (values[0] === 1 && values[1] === 'Bela') callback(null, []);
     }
-    if (qstring === 'INSERT INTO heroes (name, experience, level, healthmax, healthact, attackmin, attackmax, defense, finalWords, userId, smallImage, bigImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);' && values[0] === 'Bela' && values[9] === 2) { //eslint-disable-line
+    if (qstring === 'INSERT INTO heroes (name, experience, level, healthmax, healthact, attackmin, attackmax, defense, finalWords, userId, smallImage, bigImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);' && values[0] === 'Bela' && values[9] === 1) { //eslint-disable-line
       callback(null, {
         id: undefined,
-        userId: 2,
+        userId: 1,
         name: 'Bela',
         experience: 1,
         level: 1,

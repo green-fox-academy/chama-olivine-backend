@@ -83,11 +83,8 @@ class HeroService {
 
           equipment.forEach((element) => {
             const sortedModifiers = modifiers.filter(e => e.equipmentId === element.id);
-            sortedModifiers.forEach((e) => {
-              delete e.equipmentId;
-            });
             const activeState = Boolean(Number(element.active));
-            const equipmentItem = new Equipment(element.name, sortedModifiers, element.type, activeState);
+            const equipmentItem = new Equipment(element.id, element.name, sortedModifiers, element.type, activeState);
             inventory.push(equipmentItem);
           });
           hero.inventory = inventory;

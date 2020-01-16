@@ -1,0 +1,18 @@
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "user1111"
+}
+
+###
+
+GET http://localhost:3000/heroes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTU3OTA4Mjc0MCwiZXhwIjoxNTc5MDgyNzY1fQ.P3AQ6OkbhiYFFrbj84XvZ5TNqHQ8nQ0C-FjuvIP0shM
+
+###
+
+POST http://localhost:3000/getToken
+Content-Type: application/json
+Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJpYXQiOjE1NzkwMTg2MDYsImV4cCI6MTU3OTAxODYzMX0.y5xr94l0TcrGTFJUAtrixPwXoYrCTzUDybS5pe_kfeo

@@ -3,6 +3,10 @@ const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../src/index');
 
+const jwt = require('jsonwebtoken');
+
+let newAccTokenHeader = '';
+
 const expectedOutputWithExistingUserId = [{
   id: 3,
   name: 'hero3',
@@ -34,43 +38,32 @@ const expectedOutputWithExistingUserId = [{
   bigImage: null,
 }];
 
+describe('POST /login', () => {
+  it('should get back the userId from the accessToken and the header for GET /heroes test', (done) => {
+    request(app)
+      .post('/login')
+      .send({
+        username: 'Daniel',
+        password: 'xxxx5555',
+      })
+      .end((err, data) => {
+        if (err) return done(err);
+        newAccTokenHeader = `Bearer ${data.body.accessToken}`;
+        expect(JSON.stringify(jwt.decode(data.body.accessToken).userId)).to.equal(JSON.stringify(1));
+        return done();
+      });
+  });
+});
+
 describe('GET /heroes', () => {
   it('should respond with an array of heros', (done) => {
     request(app)
       .get('/heroes')
-      .set('Accept', 'application/json')
-      .set('userid', '2')
+      .set('Authorization', newAccTokenHeader)
       .expect(200)
-      .expect('Content-Type', /json/)
       .end((err, data) => {
         if (err) return done(err);
         expect(JSON.stringify(data.body)).to.equal(JSON.stringify(expectedOutputWithExistingUserId));
-        return done();
-      });
-  });
-  it('should respond with an empty array if userId doesn\'t exist', (done) => {
-    request(app)
-      .get('/heroes')
-      .set('Accept', 'application/json')
-      .set('userid', '3')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end((err, data) => {
-        if (err) return done(err);
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify([]));
-        return done();
-      });
-  });
-  it('should respond with an empty array if userId is invalid', (done) => {
-    request(app)
-      .get('/heroes')
-      .set('Accept', 'application/json')
-      .set('userid', 'i')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end((err, data) => {
-        if (err) return done(err);
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify([]));
         return done();
       });
   });

@@ -1,5 +1,6 @@
 class Equipment {
-  constructor(name, modifier, type, active) {
+  constructor(id, name, modifier, type, active) {
+    this.id = id;
     this.name = name;
     this.type = type;
     this.active = active;
