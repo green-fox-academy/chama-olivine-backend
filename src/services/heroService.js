@@ -28,6 +28,15 @@ class HeroService {
     });
   }
 
+  heroExists(heroId) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM heroes WHERE id = ?;';
+      this.conn.query(query, [heroId], (err, row) => {
+        err ? reject(err) : resolve(row.length);
+      });
+    });
+  }
+
   createHero(hero) {
     return new Promise((resolve, reject) => {
       if (hero.name && hero.userId) {

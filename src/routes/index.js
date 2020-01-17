@@ -13,6 +13,8 @@ const LoginService = require('../services/loginService');
 const EquipmentController = require('../controllers/equipmentController');
 const EquipmentService = require('../services/equipmentService');
 const Authentication = require('../services/authenticationService');
+const DungeonController = require('../controllers/dungeonController');
+const DungeonService = require('../services/dungeonService');
 
 let useddb = conn;
 let accTokSec = process.env.ACCESS_TOKEN_SECRET;
@@ -33,6 +35,8 @@ const loginService = new LoginService(useddb, registrationService, auth.generate
 const loginController = new LoginController(loginService);
 const equipmentService = new EquipmentService(useddb);
 const equipmentController = new EquipmentController(equipmentService);
+const dungeonService = new DungeonService(useddb, equipmentService, heroService);
+const dungeonController = new DungeonController(dungeonService);
 
 router.get('/helloworld', helloWorldController.helloWorldController);
 
@@ -49,5 +53,7 @@ router.post('/register', registrationController.register);
 router.post('/hero/use', auth.authenticateToken, equipmentController.use);
 
 router.post('/getToken', auth.RefreshedToken);
+
+router.get('/dungeon', auth.authenticateToken, dungeonController.getDungeonInstance);
 
 module.exports = router;
