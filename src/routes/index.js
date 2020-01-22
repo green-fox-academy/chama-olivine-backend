@@ -56,4 +56,6 @@ router.post('/getToken', auth.RefreshedToken);
 
 router.get('/dungeon', auth.authenticateToken, dungeonController.getDungeonInstance);
 
+router.put('/collect', auth.authenticateToken, dungeonController.collectReward);
+
 module.exports = router;

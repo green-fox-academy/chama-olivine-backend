@@ -78,6 +78,23 @@ class EquipmentService {
       reject(new Error(400));
     });
   }
+
+  copyEquipment(equipment, heroId) {
+    return new Promise((resolve, reject) => {
+      const query = 'INSERT INTO equipment(name, type, active, heroId) VALUES(?,?,?,?);';
+      this.conn.query(query, [equipment.name, equipment.type, 0, heroId], (err, row) => {
+        if (err) {
+          return reject(new Error(500));
+        }
+        return resolve({
+          id: row.insertId,
+          name: equipment.name,
+          type: equipment.type,
+          active: 0,
+        });
+      });
+    });
+  }
 }
 
 module.exports = EquipmentService;

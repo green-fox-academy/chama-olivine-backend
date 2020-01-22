@@ -13,9 +13,8 @@ class DungeonService {
 
     return new Promise((resolve, reject) => {
       this.conn.query(query, [dungeonId, dungeonId, dungeonId], (err, row) => {
-        if (err) {
-          return reject(new Error(500));
-        }
+        if (err) return reject(new Error(500));
+
         const dungeon = row[0][0];
         const obstacles = row[1];
         const rewards = row[2];
@@ -29,12 +28,12 @@ class DungeonService {
           delete e.id;
         });
 
-        return resolve(new Dungeon(dungeon.id, dungeon.name, obstacles, rewards));
+        return resolve(new Dungeon(dungeon.id, dungeon.name, obstacles, rewards, dungeon.image));
       });
     });
   }
 
-  async newRandomDungeonInstance(heroId) {
+  async randomDungeonInstance(heroId, dungeonId) {
     const query = 'SELECT * FROM dungeons;';
     return new Promise((resolve, reject) => {
       this.conn.query(query, [], (err, row) => {
@@ -42,31 +41,38 @@ class DungeonService {
       });
     }).then((res) => {
       const randomDungeon = res[Math.floor(Math.random() * res.length)];
-      return this.createInstance(heroId, randomDungeon.id, 0, 0, randomDungeon.name, randomDungeon.image);
+      if (dungeonId !== 0) {
+        return this.updateInstance(heroId, randomDungeon.id, randomDungeon.name, randomDungeon.image);
+      }
+      return this.createInstance(heroId, randomDungeon.id, randomDungeon.name, randomDungeon.image);
     });
   }
 
-  createInstance(heroId, dungeonId, scouted, removed, name, image) {
+  createInstance(heroId, dungeonId, name, image) {
     return new Promise((resolve, reject) => {
       const query = 'INSERT INTO dungeoninstance(heroId, dungeonId, scoutedObstacles, removedObstacles, name, image) VALUES(?,?,?,?,?,?);';
 
-      this.conn.query(query, [heroId, dungeonId, scouted, removed, name, image], (err, res) => {
-        if (err) {
-          return reject(new Error(500));
-        }
-        if (res === undefined) {
-          return reject(new Error(400));
-        }
+      this.conn.query(query, [heroId, dungeonId, 0, 0, name, image], (err, res) => {
+        if (err) return reject(new Error(500));
+        if (res === undefined) return reject(new Error(400));
 
-        return resolve(new DungeonInstance(parseInt(heroId, 10), parseInt(dungeonId, 10), scouted, removed, name, image));
+        return resolve(new DungeonInstance(parseInt(heroId, 10), parseInt(dungeonId, 10), 0, 0, name, image));
       });
     });
   }
 
+  updateInstance(heroId, dungeonId, name, image) {
+    return new Promise((resolve, reject) => {
+      const query = 'DELETE FROM dungeoninstance WHERE heroId = ?;';
+      this.conn.query(query, [heroId], (err) => {
+        if (err) return reject(new Error(500));
+        return resolve('ok');
+      });
+    }).then(() => this.createInstance(heroId, dungeonId, name, image));
+  }
+
   async dungeonInstance(heroId) {
-    if (!heroId || Number.isNaN(Number(heroId))) {
-      return Promise.reject(new Error(400));
-    }
+    if (!heroId || Number.isNaN(Number(heroId))) return Promise.reject(new Error(400));
 
     const check = await this.heroService.heroExists(heroId);
     return new Promise((resolve, reject) => {
@@ -75,26 +81,45 @@ class DungeonService {
         return;
       }
       const query = 'SELECT * FROM dungeoninstance WHERE heroId = ?;';
-      this.conn.query(query, [heroId], (err, res) => {
+      this.conn.query(query, [Number(heroId)], (err, res) => {
         err ? reject(new Error(500)) : resolve(res[0]);
       });
     }).then((res) => {
-      if (res === undefined) {
-        return this.newRandomDungeonInstance(heroId);
-      }
+      if (res === undefined) return this.randomDungeonInstance(heroId, 0);
       return new DungeonInstance(res.heroId, res.dungeonId, res.scoutedObstacles, res.removedObstacles, res.name, res.image);
     }).then(async (res) => {
       const dungeon = await this.getDungeonData(res.dungeonId);
       const unknown = { name: '?' };
       const result = dungeon.obstacles.map((e, i) => {
-        if (i < res.scoutedObstacles) {
-          return e;
-        }
+        delete e.dungeonId;
+        if (i < res.obstacles) return e;
         return unknown;
       });
       res.obstacles = result;
       return res;
     });
+  }
+
+  async collect(heroId) {
+    if (!heroId || Number.isNaN(Number(heroId))) return Promise.reject(new Error(400));
+    const result = {
+      changed: [],
+      added: [],
+      removed: [],
+    };
+    const dungeonInstance = await this.dungeonInstance(parseInt(heroId, 10));
+    const dungeon = await this.getDungeonData(dungeonInstance.dungeonId);
+
+    if (dungeonInstance.removedObstacles === dungeon.obstacles.length) {
+      dungeon.rewards.forEach(async (e) => {
+        const temp = await this.equipmentService.copyEquipment(e, heroId);
+        result.added.push(temp);
+      });
+      await this.randomDungeonInstance(heroId, dungeon.id);
+    } else {
+      return Promise.reject(new Error(412));
+    }
+    return Promise.resolve(result);
   }
 }
 
