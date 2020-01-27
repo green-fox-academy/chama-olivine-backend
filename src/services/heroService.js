@@ -54,8 +54,7 @@ class HeroService {
           hero.userId,
           hero.smallImage,
           hero.bigImage,
-        ],
-        (err, row) => {
+        ], (err, row) => {
           hero.id = row.insertId;
           err ? reject(err) : resolve(new Hero(hero));
         });
@@ -80,8 +79,8 @@ class HeroService {
 
   retrieveHeroById(heroId) {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM heroes WHERE id = ?; SELECT name, id, type, active FROM equipment WHERE heroId = ?; SELECT equipmentId, attributeName, value FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE heroId = ?;'; //eslint-disable-line
-      this.conn.query(query, [heroId, heroId, heroId], (err, rows) => {
+      const query = 'SELECT * FROM heroes WHERE id = ?; SELECT name, id, type, active FROM equipment WHERE heroId = ?; SELECT equipmentId, attributeName, value FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE heroId = ?; SELECT * FROM idleStatus WHERE heroId = ?;'; //eslint-disable-line
+      this.conn.query(query, [heroId, heroId, heroId, heroId], (err, rows) => {
         if (err) {
           reject(err);
         } else if (rows[0].length > 0) {
@@ -99,6 +98,7 @@ class HeroService {
           hero.inventory = inventory;
 
           const resHero = new Hero(hero);
+          resHero.actionType = rows[3][0].type;
           resolve(resHero);
         } else {
           reject(new Error('The requested hero doesn\'t exist'));
