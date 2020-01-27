@@ -15,6 +15,8 @@ const EquipmentService = require('../services/equipmentService');
 const Authentication = require('../services/authenticationService');
 const DungeonController = require('../controllers/dungeonController');
 const DungeonService = require('../services/dungeonService');
+const IdleActionController = require('../controllers/idleActionController');
+const IdleActionService = require('../services/idleActionService');
 
 let useddb = conn;
 let accTokSec = process.env.ACCESS_TOKEN_SECRET;
@@ -37,6 +39,8 @@ const equipmentService = new EquipmentService(useddb);
 const equipmentController = new EquipmentController(equipmentService);
 const dungeonService = new DungeonService(useddb, equipmentService, heroService);
 const dungeonController = new DungeonController(dungeonService);
+const idleActionService = new IdleActionService(useddb);
+const idleActionController = new IdleActionController(idleActionService);
 
 router.get('/helloworld', helloWorldController.helloWorldController);
 
@@ -57,5 +61,7 @@ router.post('/getToken', auth.RefreshedToken);
 router.get('/dungeon', auth.authenticateToken, dungeonController.getDungeonInstance);
 
 router.put('/collect', auth.authenticateToken, dungeonController.collectReward);
+
+router.put('/hero/:id/action/:type', auth.authenticateToken, idleActionController.setIdleAction);
 
 module.exports = router;

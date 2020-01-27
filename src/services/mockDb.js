@@ -220,6 +220,13 @@ const mockdb = {
     }
     if (qstring === 'DELETE FROM dungeoninstance WHERE heroId = ?;') callback(null, '');
     if (qstring === 'INSERT INTO equipment(name, type, active, heroId) VALUES(?,?,?,?);') callback(null, { insertId: 394 });
+    if (qstring === 'SELECT * FROM idleStatus WHERE heroId = ?;') {
+      if (values[0] === '1') callback(null, []);
+      if (values[0] === '2') callback(null, ['ok']);
+      if (values[0] === '3') callback(null, [{ type: 'rest' }]);
+    }
+    if (qstring === 'INSERT INTO idleStatus(heroId, type, timestamp) VALUES(?, ?, ?);') callback(null, 'ok');
+    if (qstring === 'UPDATE idleStatus SET type = ?, timestamp = ? WHERE heroId = ?;') callback(null, 'ok');
   },
 };
 
