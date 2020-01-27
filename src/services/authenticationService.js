@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const accTokExp = '5s';
-const refTokExp = '5m';
+const accTokExp = '10m';
+const refTokExp = '1d';
 
 class AuthenticationService {
   constructor(accTokSec, refTokSec) {

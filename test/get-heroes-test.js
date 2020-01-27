@@ -2,8 +2,7 @@ process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const { expect } = require('chai');
 const app = require('../src/index');
-
-const jwt = require('jsonwebtoken');
+const mocha = require('mocha');
 
 let newAccTokenHeader = '';
 
@@ -38,8 +37,8 @@ const expectedOutputWithExistingUserId = [{
   bigImage: null,
 }];
 
-describe('POST /login', () => {
-  it('should get back the userId from the accessToken and the header for GET /heroes test', (done) => {
+describe('GET /heroes', () => {
+  mocha.before((done) => {
     request(app)
       .post('/login')
       .send({
@@ -48,14 +47,11 @@ describe('POST /login', () => {
       })
       .end((err, data) => {
         if (err) return done(err);
+        expect(data.statusCode).to.equal(200);
         newAccTokenHeader = `Bearer ${data.body.accessToken}`;
-        expect(JSON.stringify(jwt.decode(data.body.accessToken).userId)).to.equal(JSON.stringify(1));
         return done();
       });
   });
-});
-
-describe('GET /heroes', () => {
   it('should respond with an array of heros', (done) => {
     request(app)
       .get('/heroes')
