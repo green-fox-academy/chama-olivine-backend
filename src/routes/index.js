@@ -64,4 +64,6 @@ router.put('/collect', auth.authenticateToken, dungeonController.collectReward);
 
 router.put('/hero/:id/action/:type', auth.authenticateToken, idleActionController.setIdleAction);
 
+router.put('/finalWords', auth.authenticateToken, dungeonController.postFinalWords);
+
 module.exports = router;

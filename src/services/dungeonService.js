@@ -121,6 +121,18 @@ class DungeonService {
     }
     return Promise.resolve(result);
   }
+
+  updateWords(heroId, words) {
+    return new Promise((resolve, reject) => {
+      const query = 'UPDATE heroes SET finalWords = ? WHERE id = ?;'; //eslint-disable-line
+      this.conn.query(query, [
+        words,
+        heroId,
+      ], (err, row) => {
+        err ? reject(err) : resolve(row);
+      });
+    });
+  }
 }
 
 module.exports = DungeonService;
