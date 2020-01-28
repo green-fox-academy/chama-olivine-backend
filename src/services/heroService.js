@@ -98,7 +98,9 @@ class HeroService {
           hero.inventory = inventory;
 
           const resHero = new Hero(hero);
-          resHero.actionType = rows[3][0].type;
+          if (rows[3][0]) {
+            resHero.actionType = rows[3][0].type;
+          }
           resolve(resHero);
         } else {
           reject(new Error('The requested hero doesn\'t exist'));
