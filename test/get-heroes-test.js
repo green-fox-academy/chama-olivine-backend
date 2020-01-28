@@ -8,6 +8,7 @@ let newAccTokenHeader = '';
 
 const expectedOutputWithExistingUserId = [{
   id: 3,
+  userId: 2,
   name: 'hero3',
   experience: 1,
   level: 1,
@@ -16,13 +17,15 @@ const expectedOutputWithExistingUserId = [{
   attackmin: 1,
   attackmax: 1,
   defense: 1,
+  inventory: [],
   finalWords: 'Fuck off!',
-  userId: 2,
   smallImage: null,
   bigImage: null,
+  actionType: 'rest',
 },
 {
   id: 4,
+  userId: 2,
   name: 'hero4',
   experience: 1,
   level: 1,
@@ -31,10 +34,11 @@ const expectedOutputWithExistingUserId = [{
   attackmin: 1,
   attackmax: 1,
   defense: 1,
+  inventory: [],
   finalWords: 'Fuck off!',
-  userId: 2,
   smallImage: null,
   bigImage: null,
+  actionType: 'rest',
 }];
 
 describe('GET /heroes', () => {

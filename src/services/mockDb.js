@@ -1,37 +1,39 @@
 const mockdb = {
   query: (qstring, values, callback) => {
-    if (qstring === 'SELECT * FROM heroes WHERE userId = ?;' && values[0] === 3) callback(null, []);
-    if (qstring === 'SELECT * FROM heroes WHERE userId = ?;' && values[0] === 1) {
-      callback(null, [{
-        id: 3,
-        name: 'hero3',
-        experience: 1,
-        level: 1,
-        healthmax: 1,
-        healthact: 1,
-        attackmin: 1,
-        attackmax: 1,
-        defense: 1,
-        finalWords: 'Fuck off!',
-        userId: 2,
-        smallImage: null,
-        bigImage: null,
-      },
-      {
-        id: 4,
-        name: 'hero4',
-        experience: 1,
-        level: 1,
-        healthmax: 1,
-        healthact: 1,
-        attackmin: 1,
-        attackmax: 1,
-        defense: 1,
-        finalWords: 'Fuck off!',
-        userId: 2,
-        smallImage: null,
-        bigImage: null,
-      }]);
+    if (qstring === 'SELECT * FROM heroes INNER JOIN idleStatus ON heroes.id = idleStatus.heroId WHERE userId = ?;') {
+      if (values[0] === 3) callback(null, []);
+      if (values[0] === 1) {
+        callback(null, [{
+          id: 3,
+          name: 'hero3',
+          experience: 1,
+          level: 1,
+          healthmax: 1,
+          healthact: 1,
+          attackmin: 1,
+          attackmax: 1,
+          defense: 1,
+          finalWords: 'Fuck off!',
+          userId: 2,
+          smallImage: null,
+          bigImage: null,
+        },
+        {
+          id: 4,
+          name: 'hero4',
+          experience: 1,
+          level: 1,
+          healthmax: 1,
+          healthact: 1,
+          attackmin: 1,
+          attackmax: 1,
+          defense: 1,
+          finalWords: 'Fuck off!',
+          userId: 2,
+          smallImage: null,
+          bigImage: null,
+        }]);
+      }
     }
     if (qstring === 'SELECT * FROM heroes INNER JOIN users ON heroes.userId = users.id WHERE users.id = ? AND heroes.name = ?;') {
       if (values[0] === 1 && values[1] === 'hero1') callback(null, [1]);

@@ -11,10 +11,10 @@ class HeroService {
         resolve([]);
         return;
       }
-      const query = 'SELECT * FROM heroes WHERE userId = ?;';
 
+      const query = 'SELECT * FROM heroes INNER JOIN idleStatus ON heroes.id = idleStatus.heroId WHERE userId = ?;';
       this.conn.query(query, [id], (err, row) => {
-        err ? reject(err) : resolve(row);
+        err ? reject(err) : resolve(row.map(e => new Hero(e)));
       });
     });
   }
