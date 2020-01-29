@@ -27,7 +27,6 @@ class DungeonService {
           delete e.image;
           delete e.id;
         });
-
         return resolve(new Dungeon(dungeon.id, dungeon.name, obstacles, rewards, dungeon.image));
       });
     });
@@ -130,6 +129,38 @@ class DungeonService {
         heroId,
       ], (err, row) => {
         err ? reject(err) : resolve(row);
+      });
+    });
+  }
+
+  async scoutedInstance(heroId) {
+    if (!heroId || Number.isNaN(Number(heroId))) return Promise.reject(new Error(400));
+    const check = await this.heroService.heroExists(heroId);
+    return new Promise((resolve, reject) => {
+      if (check !== 1) {
+        reject(new Error(400));
+        return;
+      }
+      const query = 'SELECT scoutedObstacles FROM dungeoninstance WHERE heroId = ?;';
+      this.conn.query(query, [Number(heroId)], (err, res) => {
+        err ? reject(new Error(500)) : resolve(res[0].scoutedObstacles);
+      });
+    });
+  }
+
+  updateInstanceDb(heroId, dungeonId, scoutedObstacles, removedOBstacles, name, image) {
+    return new Promise((resolve, reject) => {
+      const query = 'UPDATE dungeoninstance SET dungeonId = ?, scoutedObstacles = ?, removedOBstacles = ?, name = ?, image = ? WHERE heroId = ?;'; // eslint-disable-line
+      this.conn.query(query, [
+        dungeonId,
+        scoutedObstacles,
+        removedOBstacles,
+        name,
+        image,
+        heroId,
+      ], (err) => {
+        if (err) return reject(new Error(500));
+        return resolve('ok');
       });
     });
   }

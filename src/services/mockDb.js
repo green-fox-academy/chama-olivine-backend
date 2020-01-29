@@ -234,6 +234,387 @@ const mockdb = {
     }
     if (qstring === 'INSERT INTO idleStatus(heroId, type, timestamp) VALUES(?, ?, ?);') callback(null, 'ok');
     if (qstring === 'UPDATE idleStatus SET type = ?, timestamp = ? WHERE heroId = ?;') callback(null, 'ok');
+    if (qstring === 'SELECT * FROM heroes WHERE id = ?; SELECT name, id, type, active FROM equipment WHERE heroId = ?; SELECT equipmentId, attributeName, value FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE heroId = ?;') callback('error', 'a'); //eslint-disable-line
+    if (qstring === 'SELECT * FROM heroes WHERE id = ?; SELECT name, id, type, active FROM equipment WHERE heroId = ?; SELECT equipmentId, attributeName, value FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE heroId = ?; SELECT * FROM idleStatus WHERE heroId = ?;') { //eslint-disable-line
+      if (values[0] === '1') {
+        callback(null, [
+          [
+            {
+              id: 1,
+              name: 'hero1',
+              experience: 1,
+              level: 1,
+              healthmax: 1,
+              healthact: 1,
+              attackmin: 1,
+              attackmax: 1,
+              defense: 1,
+              finalWords: 'Fuck off!',
+              userId: 1,
+              smallImage: null,
+              bigImage: null,
+            },
+          ],
+          [
+            {
+              name: 'Sword of major farts',
+              id: 2,
+              type: 'Right Hand',
+              active: 0,
+            },
+            {
+              name: 'Spear of incompetent developers',
+              id: 4,
+              type: 'Left Hand',
+              active: 0,
+            },
+            {
+              name: 'Bow of major annoyance',
+              id: 6,
+              type: 'Left Hand',
+              active: 0,
+            },
+          ],
+          [
+            { equipmentId: 2, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 5 },
+            { equipmentId: 4, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 4, attributeName: 'attackmin', value: 11 },
+            { equipmentId: 4, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 6, attributeName: 'attackmin', value: 8 },
+          ],
+          [
+            { type: 'rest' },
+          ],
+        ]);
+      }
+      if (values[0] === '2') {
+        callback(null, [
+          [
+            {
+              id: 2,
+              name: 'hero2',
+              experience: 1,
+              level: 1,
+              healthmax: 1,
+              healthact: 0,
+              attackmin: 1,
+              attackmax: 1,
+              defense: 1,
+              finalWords: 'Fuck off!',
+              userId: 1,
+              smallImage: null,
+              bigImage: null,
+            },
+          ],
+          [
+            {
+              name: 'Sword of major farts',
+              id: 2,
+              type: 'Right Hand',
+              active: 0,
+            },
+            {
+              name: 'Spear of incompetent developers',
+              id: 4,
+              type: 'Left Hand',
+              active: 0,
+            },
+            {
+              name: 'Bow of major annoyance',
+              id: 6,
+              type: 'Left Hand',
+              active: 0,
+            },
+          ],
+          [
+            { equipmentId: 2, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 5 },
+            { equipmentId: 4, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 4, attributeName: 'attackmin', value: 11 },
+            { equipmentId: 4, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 6, attributeName: 'attackmin', value: 8 },
+          ],
+          [
+            { type: 'rest' },
+          ],
+        ]);
+      }
+      if (values[0] === '111') {
+        callback(null, [
+          [
+            {
+              id: 111,
+              name: 'hero111',
+              experience: 0,
+              level: 1,
+              healthmax: 20,
+              healthact: 20,
+              attackmin: 20,
+              attackmax: 20,
+              defense: 20,
+              finalWords: 'ok',
+              userId: 1,
+              smallImage: null,
+              bigImage: null,
+            },
+          ],
+          [
+            {
+              name: 'Sword of major farts',
+              id: 2,
+              type: 'Right Hand',
+              active: 0,
+            },
+            {
+              name: 'Spear of incompetent developers',
+              id: 4,
+              type: 'Left Hand',
+              active: 0,
+            },
+            {
+              name: 'Bow of major annoyance',
+              id: 6,
+              type: 'Left Hand',
+              active: 0,
+            },
+          ],
+          [
+            { equipmentId: 2, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 5 },
+            { equipmentId: 4, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 4, attributeName: 'attackmin', value: 11 },
+            { equipmentId: 4, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 6, attributeName: 'attackmin', value: 8 },
+          ],
+          [
+            { type: 'rest' },
+          ],
+        ]);
+      }
+      if (values[0] === '222') {
+        callback(null, [
+          [
+            {
+              id: 222,
+              name: 'hero222',
+              experience: 0,
+              level: 1,
+              healthmax: 20,
+              healthact: 20,
+              attackmin: 0,
+              attackmax: 0,
+              defense: 200,
+              finalWords: 'ok',
+              userId: 1,
+              smallImage: null,
+              bigImage: null,
+            },
+          ],
+          [
+            {
+              name: 'Sword of major farts',
+              id: 2,
+              type: 'Right Hand',
+              active: 0,
+            },
+            {
+              name: 'Spear of incompetent developers',
+              id: 4,
+              type: 'Left Hand',
+              active: 0,
+            },
+            {
+              name: 'Bow of major annoyance',
+              id: 6,
+              type: 'Left Hand',
+              active: 0,
+            },
+          ],
+          [
+            { equipmentId: 2, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 2, attributeName: 'healthmax', value: 5 },
+            { equipmentId: 4, attributeName: 'healthmax', value: 12 },
+            { equipmentId: 4, attributeName: 'attackmin', value: 11 },
+            { equipmentId: 4, attributeName: 'attackmax', value: -11 },
+            { equipmentId: 6, attributeName: 'attackmin', value: 8 },
+          ],
+          [
+            { type: 'rest' },
+          ],
+        ]);
+      }
+    }
+    if (qstring === 'SELECT * FROM dungeoninstance WHERE heroId = ?;') {
+      if (values[0] === 1) {
+        callback(null, [{
+          heroId: 1,
+          dungeonId: 2,
+          obstacles: [{ name: '?' }],
+          removedObstacles: 1,
+          name: 'dungeon2',
+          image: '',
+        }]);
+      }
+      if (values[0] === 2) {
+        callback(null, [{
+          heroId: 2,
+          dungeonId: 2,
+          obstacles: [{ name: '?' }],
+          removedObstacles: 0,
+          name: 'dungeon2',
+          image: '',
+        }]);
+      }
+      if (values[0] === 111) {
+        callback(null, [{
+          heroId: 111,
+          dungeonId: 111,
+          obstacles: [{ name: '?' }],
+          removedObstacles: 0,
+          name: 'dungeon111',
+          image: '',
+        }]);
+      }
+      if (values[0] === 222) {
+        callback(null, [{
+          heroId: 222,
+          dungeonId: 222,
+          obstacles: [{ name: '?' }],
+          removedObstacles: 0,
+          name: 'dungeon222',
+          image: '',
+        }]);
+      }
+    }
+    if (qstring === 'SELECT * FROM dungeons WHERE id = ?; SELECT * FROM dungeonobstacles INNER JOIN dungeons ON dungeons.id = dungeonobstacles.dungeonId INNER JOIN obstacles ON dungeonobstacles.obstacleId = obstacles.id WHERE dungeonId = ?; SELECT * FROM dungeonrewards INNER JOIN dungeons ON dungeons.id = dungeonrewards.dungeonId INNER JOIN equipment ON dungeonrewards.equipmentId = equipment.id WHERE dungeonId = ?;') { //eslint-disable-line
+      if (values[0] === '1') {
+        callback(null, [[{
+          id: 2,
+          name: 'dungeon2',
+          image: '',
+        }], [{
+          dungeonId: 2,
+          obstacleId: 1,
+          name: 'asd',
+          healthmax: 10,
+          attackmin: 10,
+          attackmax: 10,
+          defense: 10,
+          experience: 10,
+          images: 'asd',
+          id: 0,
+        }], [{
+          dungeonId: 2,
+          equipmentId: 1,
+          name: 'Sword of minor bullshit',
+          type: 'LeftHand',
+          active: 0,
+          heroId: 2,
+          images: 'asd',
+          id: 0,
+        }]]);
+      }
+      if (values[0] === '2') {
+        callback(null, [[{
+          id: 2,
+          name: 'dungeon2',
+          image: '',
+        }], [{
+          dungeonId: 2,
+          obstacleId: 1,
+          name: 'asd',
+          healthmax: 10,
+          attackmin: 10,
+          attackmax: 10,
+          defense: 10,
+          experience: 10,
+          images: 'asd',
+          id: 0,
+        }], [{
+          dungeonId: 2,
+          equipmentId: 1,
+          name: 'Sword of minor bullshit',
+          type: 'LeftHand',
+          active: 0,
+          heroId: 2,
+          images: 'asd',
+          id: 0,
+        }]]);
+      }
+      if (values[0] === '111') {
+        callback(null, [[{
+          id: 111,
+          name: 'dungeon111',
+          image: '',
+        }], [{
+          dungeonId: 111,
+          obstacleId: 111,
+          name: 'enemy111',
+          healthmax: 20,
+          attackmin: 0,
+          attackmax: 0,
+          defense: 0,
+          experience: 20,
+          images: '',
+          id: 0,
+        }], [{
+          dungeonId: 2,
+          equipmentId: 1,
+          name: 'Sword of minor bullshit',
+          type: 'LeftHand',
+          active: 0,
+          heroId: 2,
+          images: '',
+          id: 0,
+        }]]);
+      }
+      if (values[0] === '222') {
+        callback(null, [[{
+          id: 222,
+          name: 'dungeon222',
+          image: '',
+        }], [{
+          dungeonId: 222,
+          obstacleId: 222,
+          name: 'enemy222',
+          healthmax: 20,
+          attackmin: 0,
+          attackmax: 0,
+          defense: 200,
+          experience: 20,
+          images: '',
+          id: 0,
+        }], [{
+          dungeonId: 2,
+          equipmentId: 1,
+          name: 'Sword of minor bullshit',
+          type: 'LeftHand',
+          active: 0,
+          heroId: 2,
+          images: 'asd',
+          id: 0,
+        }]]);
+      }
+    }
+    if (qstring === 'SELECT scoutedObstacles FROM dungeoninstance WHERE heroId = ?;') {
+      if (values[0] === 1) {
+        callback(null, [2]);
+      }
+      if (values[0] === 2) {
+        callback(null, [0]);
+      }
+      if (values[0] === 111) {
+        callback(null, [0]);
+      }
+      if (values[0] === 222) {
+        callback(null, [0]);
+      }
+    }
   },
 };
 

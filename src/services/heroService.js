@@ -108,6 +108,27 @@ class HeroService {
       });
     });
   }
+
+  updateHero(hero) {
+    return new Promise((resolve, reject) => {
+      const query = 'UPDATE heroes SET experience = ?, level = ?, healthmax = ?, healthact = ?, attackmin = ?, attackmax = ?, defense = ?, finalWords = ?, smallImage = ?, bigImage = ? WHERE id = ?;'; //eslint-disable-line
+      this.conn.query(query, [
+        hero.experience,
+        hero.level,
+        hero.healthmax,
+        hero.healthact,
+        hero.attackmin,
+        hero.attackmax,
+        hero.defense,
+        hero.finalWords,
+        hero.smallImage,
+        hero.bigImage,
+        hero.id,
+      ], (err, row) => {
+        err ? reject(err) : resolve(row);
+      });
+    });
+  }
 }
 
 module.exports = HeroService;
