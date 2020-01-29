@@ -52,7 +52,11 @@ describe('POST /hero', () => {
       .post('/hero')
       .set('Accept', 'application/json')
       .set('Authorization', newAccTokenHeader)
-      .send({ name: 'Bela' })
+      .send({
+        name: 'Bela',
+        smallImage: expectedResponses[0].smallImage,
+        bigImage: expectedResponses[0].bigImage,
+      })
       .expect('Content-Type', /json/)
       .expect(200)
       .end((err, data) => {

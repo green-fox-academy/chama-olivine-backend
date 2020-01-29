@@ -19,6 +19,8 @@ class HeroController {
     const heroInput = {
       userId: Number(this.getIdFromToken(req)),
       name: req.body.name,
+      smallImage: req.body.smallImage,
+      bigImage: req.body.bigImage,
     };
     if (heroInput.userId && heroInput.name) {
       const hero = new Hero(heroInput);
