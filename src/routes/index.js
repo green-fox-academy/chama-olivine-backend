@@ -20,6 +20,7 @@ const IdleActionService = require('../services/idleActionService');
 const FightService = require('../services/fightService');
 const FightController = require('../controllers/fightController');
 const DeadOrAlive = require('../services/deadOrAliveService');
+const IdleHeroUpdateService = require('../services/idleHeroUpdateService');
 
 let useddb = conn;
 let accTokSec = process.env.ACCESS_TOKEN_SECRET;
@@ -47,6 +48,7 @@ const dungeonController = new DungeonController(dungeonService);
 const fightService = new FightService(useddb, heroService, dungeonService);
 const fightController = new FightController(fightService);
 const deadOrAlive = new DeadOrAlive(Authentication.getIdFromToken, useddb);
+const idleMiddleware = new IdleHeroUpdateService(useddb, heroService, dungeonService);
 
 router.get('/helloworld', helloWorldController.helloWorldController);
 
@@ -56,19 +58,19 @@ router.post('/hero', auth.authenticateToken, heroController.postHero);
 
 router.get('/heroes', auth.authenticateToken, heroController.getHeroes);
 
-router.get('/hero/:heroId', auth.authenticateToken, heroController.getHeroById);
+router.get('/hero/:heroId', auth.authenticateToken, idleMiddleware.characterStatUpdate, heroController.getHeroById);
 
 router.post('/register', registrationController.register);
 
-router.post('/hero/use', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, equipmentController.use);
+router.post('/hero/use', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, idleMiddleware.characterStatUpdate, equipmentController.use);
 
 router.post('/getToken', auth.RefreshedToken);
 
-router.get('/dungeon', auth.authenticateToken, dungeonController.getDungeonInstance);
+router.get('/dungeon', auth.authenticateToken, idleMiddleware.characterStatUpdate, dungeonController.getDungeonInstance);
 
 router.put('/collect', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, dungeonController.collectReward);
 
-router.put('/hero/:id/action/:type', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, idleActionController.setIdleAction);
+router.put('/hero/:id/action/:type', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, idleMiddleware.characterStatUpdate, idleActionController.setIdleAction); //eslint-disable-line
 
 router.put('/finalWords', auth.authenticateToken, dungeonController.postFinalWords);
 

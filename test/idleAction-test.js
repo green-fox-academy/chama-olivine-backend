@@ -27,7 +27,7 @@ describe('PUT /hero/:id/action/:type', () => {
       .set('Authorization', newAccTokenHeader)
       .end((err, data) => {
         if (err) return done();
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify('This is you error: 400'));
+        expect(JSON.stringify(data.body)).to.equal(JSON.stringify('This is your error: 400'));
         return done();
       });
   });
@@ -37,7 +37,7 @@ describe('PUT /hero/:id/action/:type', () => {
       .set('Authorization', newAccTokenHeader)
       .end((err, data) => {
         if (err) return done();
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify('This is you error: 400'));
+        expect(JSON.stringify(data.body)).to.equal(JSON.stringify('This is your error: 400'));
         return done();
       });
   });
@@ -67,7 +67,7 @@ describe('PUT /hero/:id/action/:type', () => {
       .set('Authorization', newAccTokenHeader)
       .end((err, data) => {
         if (err) return done();
-        expect(JSON.stringify(data.body)).to.equal(JSON.stringify('ok'));
+        expect(JSON.stringify(data.body)).to.equal(JSON.stringify('same status already exist'));
         return done();
       });
   });

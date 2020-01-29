@@ -141,6 +141,57 @@ class HeroService {
       });
     });
   }
+  getIdleTimestamp(heroId) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT timestamp FROM idleStatus WHERE heroId = ?';
+      this.conn.query(query, [heroId], (err, timestamp) => {
+        if (err) return reject(new Error(500));
+        return resolve(timestamp);
+      });
+    });
+  }
+
+  getIdleAction(heroId) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT type FROM idleStatus WHERE heroId = ?';
+      this.conn.query(query, [heroId], (err, type) => {
+        if (err) return reject(new Error(500));
+        return resolve(type);
+      });
+    });
+  }
+
+  async updateCurrentHp(heroId, time) {
+    const hero = await this.retrieveHeroById(heroId);
+    const oldTime = await this.getIdleTimestamp(heroId);
+    const heroMaxHp = hero.healthmax;
+    let heroActHp = hero.healthact;
+    let query = '';
+    return new Promise((resolve, reject) => {
+      heroActHp += (time * heroMaxHp * 0.1);
+      if (heroActHp > heroMaxHp) {
+        heroActHp = heroMaxHp;
+      }
+      if (time >= 1) {
+        query = `UPDATE heroes SET healthact = ${heroActHp} WHERE (id = ?);`;
+        this.conn.query(query, [heroId], (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            query = `UPDATE idleStatus SET timestamp = ${oldTime[0].timestamp + (time * 60)} WHERE (heroId = ?);`;
+            this.conn.query(query, [heroId], (error, row) => {
+              if (error) {
+                return reject(new Error(500));
+              }
+              return resolve(row);
+            });
+          }
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
 }
 
 module.exports = HeroService;

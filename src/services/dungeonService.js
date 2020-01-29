@@ -182,6 +182,33 @@ class DungeonService {
       });
     });
   }
+
+  async updateScoutedObstacles(heroId, time) {
+    const oldScoutedObstacles = await this.scoutedInstance(heroId);
+    const oldTime = await this.heroService.getIdleTimestamp(heroId);
+    let query = '';
+    return new Promise((resolve, reject) => {
+      if (time >= 1) {
+        query = `UPDATE dungeoninstance SET scoutedObstacles = ${oldScoutedObstacles + time} WHERE (heroId = ?);`;
+        this.conn.query(query, [heroId], (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            query = 'UPDATE idleStatus SET timestamp = ? WHERE heroId = ?;';
+            this.conn.query(query, [oldTime[0].timestamp + (time * 60), heroId], (error, row) => {
+              if (error) {
+                reject(new Error(500));
+                return;
+              }
+              resolve(row);
+            });
+          }
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
 }
 
 module.exports = DungeonService;

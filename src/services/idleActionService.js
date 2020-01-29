@@ -26,7 +26,7 @@ class IdleActionService {
           query = 'UPDATE idleStatus SET type = ?, timestamp = ? WHERE heroId = ?;';
           values = [type, currentTime, heroId];
         } else {
-          resolve('ok');
+          resolve('same status already exist');
           return;
         }
         this.conn.query(query, values, (err) => {
