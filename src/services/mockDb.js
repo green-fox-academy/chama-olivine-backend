@@ -1,6 +1,8 @@
 const mockdb = {
   query: (qstring, values, callback) => {
-    if (qstring === 'SELECT * FROM heroes INNER JOIN idleStatus ON heroes.id = idleStatus.heroId WHERE userId = ?;') {
+    if (qstring === 'SELECT healthact FROM heroes WHERE id = ?;') {
+      callback(null, [{ healthact: 1 }]);
+    } else if (qstring === 'SELECT * FROM heroes INNER JOIN idleStatus ON heroes.id = idleStatus.heroId WHERE userId = ?;') {
       if (values[0] === 3) callback(null, []);
       if (values[0] === 1) {
         callback(null, [{

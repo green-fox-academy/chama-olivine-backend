@@ -121,16 +121,34 @@ class DungeonService {
     return Promise.resolve(result);
   }
 
-  updateWords(heroId, words) {
+  checkFinalWords(heroId) {
     return new Promise((resolve, reject) => {
-      const query = 'UPDATE heroes SET finalWords = ? WHERE id = ?;'; //eslint-disable-line
-      this.conn.query(query, [
-        words,
-        heroId,
-      ], (err, row) => {
-        err ? reject(err) : resolve(row);
+      const query = 'SELECT finalWords FROM heroes WHERE id = ?;';
+      this.conn.query(query, [heroId], (err, rows) => {
+        if (err) {
+          reject(new Error('Please provide existing hero'));
+        } else if (rows[0].finalWords) {
+          reject(new Error('The hero already said his share'));
+        } else {
+          resolve(rows[0]);
+        }
       });
     });
+  }
+
+  async updateWords(heroId, words) { //eslint-disable-line
+    const check = await this.checkFinalWords(heroId);
+    if (check.finalWords === null) {
+      return new Promise((resolve, reject) => {
+        const query = 'UPDATE heroes SET finalWords = ? WHERE id = ?;';
+        this.conn.query(query, [
+          words,
+          heroId,
+        ], (err, row) => {
+          err ? reject(err) : resolve(row);
+        });
+      });
+    }
   }
 
   async scoutedInstance(heroId) {

@@ -19,6 +19,7 @@ const IdleActionController = require('../controllers/idleActionController');
 const IdleActionService = require('../services/idleActionService');
 const FightService = require('../services/fightService');
 const FightController = require('../controllers/fightController');
+const DeadOrAlive = require('../services/deadOrAliveService');
 
 let useddb = conn;
 let accTokSec = process.env.ACCESS_TOKEN_SECRET;
@@ -45,6 +46,7 @@ const dungeonService = new DungeonService(useddb, equipmentService, heroService)
 const dungeonController = new DungeonController(dungeonService);
 const fightService = new FightService(useddb, heroService, dungeonService);
 const fightController = new FightController(fightService);
+const deadOrAlive = new DeadOrAlive(Authentication.getIdFromToken, useddb);
 
 router.get('/helloworld', helloWorldController.helloWorldController);
 
@@ -58,18 +60,18 @@ router.get('/hero/:heroId', auth.authenticateToken, heroController.getHeroById);
 
 router.post('/register', registrationController.register);
 
-router.post('/hero/use', auth.authenticateToken, equipmentController.use);
+router.post('/hero/use', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, equipmentController.use);
 
 router.post('/getToken', auth.RefreshedToken);
 
 router.get('/dungeon', auth.authenticateToken, dungeonController.getDungeonInstance);
 
-router.put('/collect', auth.authenticateToken, dungeonController.collectReward);
+router.put('/collect', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, dungeonController.collectReward);
 
-router.put('/hero/:id/action/:type', auth.authenticateToken, idleActionController.setIdleAction);
+router.put('/hero/:id/action/:type', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, idleActionController.setIdleAction);
 
 router.put('/finalWords', auth.authenticateToken, dungeonController.postFinalWords);
 
-router.put('/fight', auth.authenticateToken, fightController.fight);
+router.put('/fight', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, fightController.fight);
 
 module.exports = router;

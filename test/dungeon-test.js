@@ -113,7 +113,21 @@ describe('PUT /finalWords', () => {
       .set('Accept', 'application/json')
       .set('Authorization', newAccTokenHeader)
       .set('herd', 67)
-      .set('words', 'I am dead')
+      .expect(400)
+      .expect('Content-Type', /json/)
+      .end((err, data) => {
+        if (err) return done(err);
+        expect(JSON.stringify(data.body)).to.equal(JSON.stringify({ error: 'Please provide final words' }));
+        return done();
+      });
+  });
+  it('controller shouldn\t even get header, and body', (done) => {
+    request(app)
+      .put('/finalWords')
+      .set('Accept', 'application/json')
+      .set('Authorization', newAccTokenHeader)
+      .set('heroid', 2)
+      .set('words', 'Fuck off!')
       .expect(400)
       .expect('Content-Type', /json/)
       .end((err, data) => {
