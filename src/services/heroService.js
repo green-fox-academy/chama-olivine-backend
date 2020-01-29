@@ -2,8 +2,9 @@ const { Hero } = require('../models/heroModel');
 const { Equipment } = require('../models/equipment');
 
 class HeroService {
-  constructor(conn) {
+  constructor(conn, idleActionService) {
     this.conn = conn;
+    this.idleActionService = idleActionService;
   }
   getHeroes(id) {
     return new Promise((resolve, reject) => {
@@ -14,7 +15,13 @@ class HeroService {
 
       const query = 'SELECT * FROM heroes INNER JOIN idleStatus ON heroes.id = idleStatus.heroId WHERE userId = ?;';
       this.conn.query(query, [id], (err, row) => {
-        err ? reject(err) : resolve(row.map(e => new Hero(e)));
+        if (err) return reject(new Error(500));
+        const result = [];
+        row.forEach((e, i) => {
+          e.idleAction = { type: row[i].type, timestamp: row[i].timestamp };
+          result.push(new Hero(e));
+        });
+        return resolve(result);
       });
     });
   }
@@ -55,8 +62,11 @@ class HeroService {
           hero.smallImage,
           hero.bigImage,
         ], (err, row) => {
+          if (err) return reject(err);
           hero.id = row.insertId;
-          err ? reject(err) : resolve(new Hero(hero));
+          hero.idleAction = { type: 'rest', timestamp: Number((Date.now() / 1000).toFixed(0)) };
+          this.idleActionService.setIdleStatus(row.insertId, 'rest').catch(error => reject(error));
+          return resolve(new Hero(hero));
         });
         return;
       }
@@ -88,6 +98,7 @@ class HeroService {
           const modifiers = rows[2];
           const hero = rows[0][0];
           const inventory = [];
+          const idleAction = rows[3][0];
 
           equipment.forEach((element) => {
             const sortedModifiers = modifiers.filter(e => e.equipmentId === element.id);
@@ -96,10 +107,11 @@ class HeroService {
             inventory.push(equipmentItem);
           });
           hero.inventory = inventory;
-
           const resHero = new Hero(hero);
-          if (rows[3][0]) {
-            resHero.actionType = rows[3][0].type;
+
+          if (idleAction) {
+            delete rows[3][0].heroId;
+            resHero.idleAction = idleAction;
           }
           resolve(resHero);
         } else {

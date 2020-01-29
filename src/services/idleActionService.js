@@ -4,15 +4,16 @@ class IdleActionService {
   }
 
   setIdleStatus(heroId, type) {
-    const currentTime = new Date() / 1000;
+    const currentTime = Number((new Date() / 1000).toFixed(0));
 
     return new Promise((resolve, reject) => {
       if (Number.isNaN(Number(heroId))) reject(new Error(400));
       if (type !== 'rest' && type !== 'scout' && type !== 'train') reject(new Error(400));
       const query = 'SELECT * FROM idleStatus WHERE heroId = ?;';
+
       this.conn.query(query, [heroId], (err, row) => {
-        if (err) return reject(new Error(500));
-        return resolve(row);
+        if (err) reject(new Error(500));
+        resolve(row);
       });
     }).then((row) => {
       let values;

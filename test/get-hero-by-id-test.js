@@ -82,8 +82,7 @@ const expectedResponses = [
     finalWords: 'Fuck off!',
     smallImage: null,
     bigImage: null,
-    actionType: 'rest',
-
+    idleAction: { type: 'rest', timestamp: 0 },
   },
   {
     Error: 'The requested hero doesn\'t exist',

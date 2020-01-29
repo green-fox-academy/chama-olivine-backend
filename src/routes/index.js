@@ -31,18 +31,18 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 const auth = new Authentication(accTokSec, refTokSec);
-const heroService = new HeroService(useddb);
-const heroController = new HeroController(heroService, Authentication.getIdFromToken);
 const registrationService = new RegistrationService(useddb);
 const registrationController = new RegistrationController(registrationService);
 const loginService = new LoginService(useddb, registrationService, auth.generateAccessToken, auth.generateRefreshToken);
 const loginController = new LoginController(loginService);
+const idleActionService = new IdleActionService(useddb);
+const idleActionController = new IdleActionController(idleActionService);
+const heroService = new HeroService(useddb, idleActionService);
+const heroController = new HeroController(heroService, Authentication.getIdFromToken);
 const equipmentService = new EquipmentService(useddb);
 const equipmentController = new EquipmentController(equipmentService);
 const dungeonService = new DungeonService(useddb, equipmentService, heroService);
 const dungeonController = new DungeonController(dungeonService);
-const idleActionService = new IdleActionService(useddb);
-const idleActionController = new IdleActionController(idleActionService);
 const fightService = new FightService(useddb, heroService, dungeonService);
 const fightController = new FightController(fightService);
 
