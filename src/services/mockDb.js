@@ -607,6 +607,9 @@ const mockdb = {
         callback(null, [0]);
       }
     }
+    if (qstring === 'SELECT * FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE equipment.id = ?;') callback(null, [{ id: 394, name: 'Sword of minor bullshit', type: 'LeftHand', active: 0 }]) //eslint-disable-line
+    if (qstring === 'INSERT INTO dungeoninstance(heroId, dungeonId, scoutedObstacles, removedObstacles, name, image) VALUES(?,?,?,?,?,?);') callback(null, 'ok') //eslint-disable-line
+    if (qstring === 'INSERT INTO equipmentAttributes(equipmentId, attributeId) VALUES(?,?);') callback(null, 'ok');
   },
 };
 

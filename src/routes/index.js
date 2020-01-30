@@ -74,6 +74,6 @@ router.put('/hero/:id/action/:type', auth.authenticateToken, deadOrAlive.toBeOrN
 
 router.put('/finalWords', auth.authenticateToken, dungeonController.postFinalWords);
 
-router.put('/fight', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, fightController.fight);
+router.put('/fight', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, idleMiddleware.characterStatUpdate, fightController.fight);
 
 module.exports = router;

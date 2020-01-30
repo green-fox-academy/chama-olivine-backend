@@ -1,3 +1,5 @@
+const { Equipment } = require('../models/equipment');
+
 class EquipmentService {
   constructor(conn) {
     this.conn = conn;
@@ -79,13 +81,38 @@ class EquipmentService {
     });
   }
 
+  equipmentData(equipmentId) {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM equipment JOIN equipmentAttributes ON equipment.id = equipmentAttributes.equipmentId JOIN attributeModifier ON attributeModifier.id = equipmentAttributes.attributeId WHERE equipment.id = ?;' //eslint-disable-line
+
+      this.conn.query(query, [equipmentId], async (err, row) => {
+        if (err) return reject(new Error(500));
+        const modifiers = await Promise.all(row.map(e => { //eslint-disable-line
+          return { attributeName: e.attributeName, value: e.value, attributeId: e.id };
+        }));
+
+        return resolve(new Equipment(equipmentId, row[0].name, modifiers, row[0].type, row[0].active));
+      });
+    });
+  }
+
+  copyAttributes(equipmentModifier, equipmentId) {
+    return new Promise((resolve, reject) => {
+      const query = 'INSERT INTO equipmentAttributes(equipmentId, attributeId) VALUES(?,?);';
+      this.conn.query(query, [equipmentId, equipmentModifier.attributeId], (err) => {
+        if (err) return reject(new Error(500));
+        return resolve('ok');
+      });
+    });
+  }
+
   copyEquipment(equipment, heroId) {
     return new Promise((resolve, reject) => {
       const query = 'INSERT INTO equipment(name, type, active, heroId) VALUES(?,?,?,?);';
-      this.conn.query(query, [equipment.name, equipment.type, 0, heroId], (err, row) => {
-        if (err) {
-          return reject(new Error(500));
-        }
+      this.conn.query(query, [equipment.name, equipment.type, 0, heroId], async (err, row) => {
+        if (err) return reject(new Error(500));
+        await Promise.all(equipment.modifiers.map(e => this.copyAttributes(e, Number(row.insertId))));
+
         return resolve({
           id: row.insertId,
           name: equipment.name,

@@ -12,21 +12,19 @@ class DungeonService {
     const query = 'SELECT * FROM dungeons WHERE id = ?; SELECT * FROM dungeonobstacles INNER JOIN dungeons ON dungeons.id = dungeonobstacles.dungeonId INNER JOIN obstacles ON dungeonobstacles.obstacleId = obstacles.id WHERE dungeonId = ?; SELECT * FROM dungeonrewards INNER JOIN dungeons ON dungeons.id = dungeonrewards.dungeonId INNER JOIN equipment ON dungeonrewards.equipmentId = equipment.id WHERE dungeonId = ?;'; // eslint-disable-line
 
     return new Promise((resolve, reject) => {
-      this.conn.query(query, [dungeonId, dungeonId, dungeonId], (err, row) => {
+      this.conn.query(query, [dungeonId, dungeonId, dungeonId], async (err, row) => {
         if (err) return reject(new Error(500));
 
         const dungeon = row[0][0];
         const obstacles = row[1];
-        const rewards = row[2];
 
         obstacles.forEach((e) => {
           delete e.id;
           delete e.image;
         });
-        rewards.forEach((e) => {
-          delete e.image;
-          delete e.id;
-        });
+
+        const rewards = await Promise.all(row[2].map(e => this.equipmentService.equipmentData(e.equipmentId)));
+
         return resolve(new Dungeon(dungeon.id, dungeon.name, obstacles, rewards, dungeon.image));
       });
     });
@@ -109,15 +107,14 @@ class DungeonService {
     const dungeonInstance = await this.dungeonInstance(parseInt(heroId, 10));
     const dungeon = await this.getDungeonData(dungeonInstance.dungeonId);
 
-    if (dungeonInstance.removedObstacles === dungeon.obstacles.length) {
-      dungeon.rewards.forEach(async (e) => {
-        const temp = await this.equipmentService.copyEquipment(e, heroId);
-        result.added.push(temp);
-      });
-      await this.randomDungeonInstance(heroId, dungeon.id);
-    } else {
-      return Promise.reject(new Error(412));
-    }
+    if (dungeonInstance.removedObstacles !== dungeon.obstacles.length) return Promise.reject(new Error(412));
+
+    dungeon.rewards.forEach(async (e) => {
+      const temp = await this.equipmentService.copyEquipment(e, heroId);
+      result.added.push(temp);
+    });
+
+    await this.randomDungeonInstance(heroId, dungeon.id);
     return Promise.resolve(result);
   }
 
@@ -168,7 +165,7 @@ class DungeonService {
 
   updateInstanceDb(heroId, dungeonId, scoutedObstacles, removedOBstacles, name, image) {
     return new Promise((resolve, reject) => {
-      const query = 'UPDATE dungeoninstance SET dungeonId = ?, scoutedObstacles = ?, removedOBstacles = ?, name = ?, image = ? WHERE heroId = ?;'; // eslint-disable-line
+      const query = 'UPDATE dungeoninstance SET dungeonId = ?, scoutedObstacles = ?, removedObstacles = ?, name = ?, image = ? WHERE heroId = ?;'; // eslint-disable-line
       this.conn.query(query, [
         dungeonId,
         scoutedObstacles,

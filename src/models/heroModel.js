@@ -1,13 +1,13 @@
 class Hero {
   constructor(hero) {
     const defaults = {
-      experience: 1,
+      experience: 0,
       level: 1,
-      healthmax: 1,
-      healthact: 1,
-      attackmin: 1,
-      attackmax: 1,
-      defense: 1,
+      healthmax: 20,
+      healthact: 20,
+      attackmin: 3,
+      attackmax: 5,
+      defense: 15,
       inventory: [],
       finalWords: null,
       smallImage: null,
