@@ -1,3 +1,5 @@
+const modifiedAttributes = ['attackmin', 'attackmax', 'healthmax', 'defense'];
+
 class FightService {
   constructor(conn, heroService, dungeonService) {
     this.conn = conn;
@@ -32,11 +34,14 @@ class FightService {
     let failFight = 0;
     let fight = true;
     let alive = true;
+
     do {
       if (hero.healthact > 0) {
+        this.activateBonus(hero);
         const damage = Math.max(this.attack(hero.attackmin, hero.attackmax, currentObstacle.defense), 0);
         currentObstacle.healthmax -= damage;
         fightLog.push(`${hero.name}(${hero.healthact} HP) hits ${currentObstacle.name} for ${damage}`);
+        this.deactivateBonus(hero);
       } else {
         fightLog.push(`${hero.name} died!`);
         fight = false;
@@ -44,9 +49,11 @@ class FightService {
         break;
       }
       if (currentObstacle.healthmax > 0) {
+        this.activateBonus(hero);
         const damage = Math.max(this.attack(currentObstacle.attackmin, currentObstacle.attackmax, hero.defense), 0);
         hero.healthact -= damage;
         fightLog.push(`${currentObstacle.name}(${currentObstacle.healthmax} HP) hits ${hero.name} for ${damage}`);
+        this.deactivateBonus(hero);
       } else {
         fight = false;
         fightLog.push(`${currentObstacle.name} died!`);
@@ -68,7 +75,6 @@ class FightService {
       fightResponse.push(fightLog, hero, updatedInstance);
       return Promise.resolve(fightResponse);
     }
-
     if (alive) {
       dungeonInstance.removedObstacles += 1;
       scoutedObstacles += 1;
@@ -118,6 +124,24 @@ class FightService {
         hero.attackmax += 1;
       }
     }
+  }
+
+  totalAttributeModifier(hero, attribute) { // eslint-disable-line
+    return hero.inventory.filter(equipment => equipment.active === true)
+      .map(equipment => equipment.modifiers.filter(modifier => modifier.attributeName === attribute)).reduce((flattenedArrays, mods) => flattenedArrays.concat(mods), []) // eslint-disable-line
+      .reduce((finalValue, modifier) => finalValue + modifier.value, 0);
+  }
+
+  activateBonus(hero) {
+    modifiedAttributes.forEach((attribute) => {
+      hero[attribute] += this.totalAttributeModifier(hero, attribute);
+    });
+  }
+
+  deactivateBonus(hero) {
+    modifiedAttributes.forEach((attribute) => {
+      hero[attribute] -= this.totalAttributeModifier(hero, attribute);
+    });
   }
 }
 
