@@ -22,7 +22,7 @@ class IdleHeroUpdateService {
   }
 
   async characterStatUpdate(req, res, next) {
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV === 'test' || req.headers.idleActionIsDisabled) {
       next();
     } else {
       const heroId = req.headers.heroid;
