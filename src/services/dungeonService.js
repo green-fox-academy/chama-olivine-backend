@@ -181,6 +181,7 @@ class DungeonService {
   }
 
   async updateScoutedObstacles(heroId, time) {
+    await this.dungeonInstance(heroId);
     const oldScoutedObstacles = await this.scoutedInstance(heroId);
     const oldTime = await this.heroService.getIdleTimestamp(heroId);
     let query = '';

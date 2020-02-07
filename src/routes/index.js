@@ -58,7 +58,7 @@ router.post('/hero', auth.authenticateToken, heroController.postHero);
 
 router.get('/heroes', auth.authenticateToken, heroController.getHeroes);
 
-router.get('/hero/:heroId', auth.authenticateToken, deadOrAlive.toBeOrNotToBeSoft, idleMiddleware.characterStatUpdate, heroController.getHeroById);
+router.get('/hero/:heroId', auth.authenticateToken, deadOrAlive.toBeOrNotToBeSoft, idleMiddleware.characterStatUpdate, heroController.getHeroById); //eslint-disable-line
 
 router.post('/register', registrationController.register);
 
@@ -66,7 +66,7 @@ router.post('/hero/use', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, idle
 
 router.post('/getToken', auth.RefreshedToken);
 
-router.get('/dungeon', auth.authenticateToken, deadOrAlive.toBeOrNotToBeSoft, idleMiddleware.characterStatUpdate, dungeonController.getDungeonInstance);
+router.get('/dungeon', auth.authenticateToken, deadOrAlive.toBeOrNotToBeSoft, idleMiddleware.characterStatUpdate, dungeonController.getDungeonInstance); //eslint-disable-line
 
 router.put('/collect', auth.authenticateToken, deadOrAlive.toBeOrNotToBe, dungeonController.collectReward);
 

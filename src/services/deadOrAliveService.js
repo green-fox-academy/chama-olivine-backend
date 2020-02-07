@@ -32,9 +32,8 @@ class DeadOrAliveSerice {
         } else if (rows[0].healthact === 0) {
           req.headers.idleActionIsDisabled = true;
           return next();
-        } else {
-          return next();
         }
+        return next();
       });
     }).catch(error => res.status(400).json(error.message));
   }
